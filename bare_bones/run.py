@@ -1,5 +1,10 @@
+# Set up the default toolkit.
+from traits.etsconfig.api import ETSConfig
+ETSConfig.toolkit = 'qt4'
+
 # Standard library imports.
 import logging
+import argparse
 
 # Plugin imports.
 from envisage.core_plugin import CorePlugin
@@ -10,13 +15,37 @@ from bare_bones_plugin import BareBonesPlugin
 from bare_bones_application import BareBonesApplication
 
 
+def parse_command_line_args():
+    parser = argparse.ArgumentParser(
+        description="A generic Tasks application",
+    )
+    parser.add_argument(
+        "-v", "--verbose",
+        action="store_true",
+        default=False,
+        help="Enable verbose logging."
+    )
+    parser.add_argument(
+        "-d", "--dummy",
+        help="A dummy command-line argument."
+    )
+    return parser.parse_args()
+
+
 def main():
     """ Run the application.
     """
-    # TODO: process command line arguments properly.
+    # Process command-line arguments.
+    args = parse_command_line_args()
 
-    logging.basicConfig(level=logging.DEBUG)
+    # Set up logging.
+    if args.verbose:
+        logging_level = logging.DEBUG
+    else:
+        logging_level = logging.WARNING
+    logging.basicConfig(level=logging_level)
 
+    # Build the application and run it.
     plugins = [CorePlugin(), TasksPlugin(), BareBonesPlugin()]
     app = BareBonesApplication(plugins=plugins)
     app.run()
